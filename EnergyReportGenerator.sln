@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EnergyReportGenerator", "EnergyReportGenerator\EnergyReportGenerator.csproj", "{EE6BC84A-2F73-4979-AF0A-EC0DF29072BC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EnergyReportGenerator.Tests", "EnergyReportGenerator.Tests\EnergyReportGenerator.Tests.csproj", "{CE5A5FD8-AFF9-4F06-96EF-5F273F086AFF}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{EE6BC84A-2F73-4979-AF0A-EC0DF29072BC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EE6BC84A-2F73-4979-AF0A-EC0DF29072BC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EE6BC84A-2F73-4979-AF0A-EC0DF29072BC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EE6BC84A-2F73-4979-AF0A-EC0DF29072BC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CE5A5FD8-AFF9-4F06-96EF-5F273F086AFF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CE5A5FD8-AFF9-4F06-96EF-5F273F086AFF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CE5A5FD8-AFF9-4F06-96EF-5F273F086AFF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CE5A5FD8-AFF9-4F06-96EF-5F273F086AFF}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
