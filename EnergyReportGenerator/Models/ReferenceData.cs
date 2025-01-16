@@ -5,7 +5,7 @@ namespace EnergyReportGenerator.Models
     [XmlRoot("ReferenceData")]
     public class ReferenceData
     {
-        [XmlArray("Factors")]
+        [XmlElement("Factors")]
         public Factors Factors { get; set; }
     }
 

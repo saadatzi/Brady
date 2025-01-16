@@ -30,7 +30,9 @@ public class FileProcessorService : IFileProcessorService
 
     public Task StartAsync(CancellationToken cancellationToken)
     {
-        var inputFolder = _configuration["InputFolder"];
+        var baseDirectory = AppContext.BaseDirectory;
+        var inputFolder = Path.Combine(baseDirectory, _configuration["InputFolder"]!);
+        Directory.CreateDirectory(inputFolder);
 
         _watcher = new FileSystemWatcher(inputFolder!, "*.xml");
         _watcher.Created += OnFileCreated;
