@@ -61,8 +61,13 @@ public class FileProcessorService : IFileProcessorService
             var referenceData = await _xmlService.DeserializeReferenceDataAsync(_configuration["ReferenceDataPath"]);
 
             // Calculate the required values
+            var generationOutput = _calculatorService.Calculate(generationReport, referenceData);
 
             // Serialize the GenerationOutput to XML
+            var outputFilePath = Path.Combine(_configuration["OutputFolder"], $"GenerationOutput_{DateTime.Now:yyyyMMddHHmmss}.xml");
+            await _xmlService.SerializeGenerationOutputAsync(generationOutput, outputFilePath);
+
+            _logger.LogInformation($"Processed and saved output to: {outputFilePath}");
         }
         catch (Exception ex)
         {
