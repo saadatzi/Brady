@@ -30,9 +30,10 @@ public class FileProcessorService : IFileProcessorService
 
     public Task StartAsync(CancellationToken cancellationToken)
     {
-        var baseDirectory = AppContext.BaseDirectory;
-        var inputFolder = Path.Combine(baseDirectory, _configuration["InputFolder"]!);
+        var inputFolder = _configuration["InputFolder"]!;
         Directory.CreateDirectory(inputFolder);
+
+        ProcessExistingFiles(inputFolder);
 
         _watcher = new FileSystemWatcher(inputFolder!, "*.xml");
         _watcher.Created += OnFileCreated;
@@ -40,6 +41,24 @@ public class FileProcessorService : IFileProcessorService
 
         _logger.LogInformation($"Watching for XML files in: {inputFolder}");
         return Task.CompletedTask;
+    }
+
+    private void ProcessExistingFiles(string inputFolder)
+    {
+        _logger.LogInformation($"Processing existing XML files in: {inputFolder}");
+
+        foreach (var filePath in Directory.GetFiles(inputFolder, "*.xml"))
+        {
+            try
+            {
+                // Manually raise the event for each existing file
+                OnFileCreated(_watcher, new FileSystemEventArgs(WatcherChangeTypes.Created, inputFolder, Path.GetFileName(filePath)));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Error processing existing file: {filePath}");
+            }
+        }
     }
 
     public Task StopAsync(CancellationToken cancellationToken)
