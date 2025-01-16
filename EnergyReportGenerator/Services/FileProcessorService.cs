@@ -14,7 +14,7 @@ public class FileProcessorService : IFileProcessorService
     private readonly IConfiguration _configuration;
     private readonly IXmlService _xmlService;
     private readonly IGenerationCalculatorService _calculatorService;
-    private FileSystemWatcher _watcher;
+    private FileSystemWatcher? _watcher;
 
     public FileProcessorService(
         ILogger<FileProcessorService> logger,
@@ -32,7 +32,7 @@ public class FileProcessorService : IFileProcessorService
     {
         var inputFolder = _configuration["InputFolder"];
 
-        _watcher = new FileSystemWatcher(inputFolder, "*.xml");
+        _watcher = new FileSystemWatcher(inputFolder!, "*.xml");
         _watcher.Created += OnFileCreated;
         _watcher.EnableRaisingEvents = true;
 
@@ -42,7 +42,7 @@ public class FileProcessorService : IFileProcessorService
 
     public Task StopAsync(CancellationToken cancellationToken)
     {
-        _watcher.EnableRaisingEvents = false;
+        _watcher!.EnableRaisingEvents = false;
         _watcher.Dispose();
         _logger.LogInformation("Stopped watching for XML files.");
         return Task.CompletedTask;
@@ -58,13 +58,13 @@ public class FileProcessorService : IFileProcessorService
             var generationReport = await _xmlService.DeserializeGenerationReportAsync(e.FullPath);
 
             // Load reference data
-            var referenceData = await _xmlService.DeserializeReferenceDataAsync(_configuration["ReferenceDataPath"]);
+            var referenceData = await _xmlService.DeserializeReferenceDataAsync(_configuration["ReferenceDataPath"]!);
 
             // Calculate the required values
             var generationOutput = _calculatorService.Calculate(generationReport, referenceData);
 
             // Serialize the GenerationOutput to XML
-            var outputFilePath = Path.Combine(_configuration["OutputFolder"], $"GenerationOutput_{DateTime.Now:yyyyMMddHHmmss}.xml");
+            var outputFilePath = Path.Combine(_configuration["OutputFolder"]!, $"GenerationOutput_{DateTime.Now:yyyyMMddHHmmss}.xml");
             await _xmlService.SerializeGenerationOutputAsync(generationOutput, outputFilePath);
 
             _logger.LogInformation($"Processed and saved output to: {outputFilePath}");

@@ -4,7 +4,7 @@ namespace EnergyReportGenerator.Services;
 
 public interface IGenerationCalculatorService
 {
-    GenerationOutput Calculate(GenerationReport report, ReferenceData referenceData);
+    GenerationOutput Calculate(GenerationReport? report, ReferenceData? referenceData);
 }
 public class GenerationCalculatorService : IGenerationCalculatorService
 {
