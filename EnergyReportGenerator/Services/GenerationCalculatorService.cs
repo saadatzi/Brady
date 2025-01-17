@@ -1,5 +1,3 @@
-using EnergyReportGenerator.Models;
-
 namespace EnergyReportGenerator.Services;
 
 public interface IGenerationCalculatorService
