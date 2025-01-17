@@ -28,37 +28,17 @@ public class FileProcessorService : IFileProcessorService
         _calculatorService = calculatorService;
     }
 
-    public Task StartAsync(CancellationToken cancellationToken)
+    public async Task StartAsync(CancellationToken cancellationToken)
     {
         var inputFolder = _configuration["InputFolder"]!;
         Directory.CreateDirectory(inputFolder);
-
-        ProcessExistingFiles(inputFolder);
 
         _watcher = new FileSystemWatcher(inputFolder!, "*.xml");
         _watcher.Created += OnFileCreated;
         _watcher.EnableRaisingEvents = true;
 
+        await ProcessExistingFilesAsync(inputFolder);
         _logger.LogInformation($"Watching for XML files in: {inputFolder}");
-        return Task.CompletedTask;
-    }
-
-    private void ProcessExistingFiles(string inputFolder)
-    {
-        _logger.LogInformation($"Processing existing XML files in: {inputFolder}");
-
-        foreach (var filePath in Directory.GetFiles(inputFolder, "*.xml"))
-        {
-            try
-            {
-                // Manually raise the event for each existing file
-                OnFileCreated(_watcher, new FileSystemEventArgs(WatcherChangeTypes.Created, inputFolder, Path.GetFileName(filePath)));
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, $"Error processing existing file: {filePath}");
-            }
-        }
     }
 
     public Task StopAsync(CancellationToken cancellationToken)
@@ -69,14 +49,30 @@ public class FileProcessorService : IFileProcessorService
         return Task.CompletedTask;
     }
 
+
+    private async Task ProcessExistingFilesAsync(string inputFolder)
+    {
+        _logger.LogInformation($"Processing existing XML files in: {inputFolder}");
+
+        var tasks = Directory.GetFiles(inputFolder, "*.xml").Select(filePath => ProcessFileAsync(filePath));
+
+        await Task.WhenAll(tasks);
+
+        _logger.LogInformation($"Finished processing all existing files.");
+    }
+
     private async void OnFileCreated(object sender, FileSystemEventArgs e)
     {
         _logger.LogInformation($"New file created: {e.FullPath}");
+        await ProcessFileAsync(e.FullPath);
+    }
 
+    private async Task ProcessFileAsync(string filePath)
+    {
         try
         {
             // Deserialize the GenerationReport XML
-            var generationReport = await _xmlService.DeserializeGenerationReportAsync(e.FullPath);
+            var generationReport = await _xmlService.DeserializeGenerationReportAsync(filePath);
 
             // Load reference data
             var referenceData = await _xmlService.DeserializeReferenceDataAsync(_configuration["ReferenceDataPath"]!);
@@ -92,7 +88,7 @@ public class FileProcessorService : IFileProcessorService
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, $"Error processing file: {e.FullPath}");
+            _logger.LogError(ex, $"Error processing file: {filePath}");
         }
     }
 }
