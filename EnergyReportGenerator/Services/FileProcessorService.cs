@@ -26,12 +26,15 @@ public class FileProcessorService : IFileProcessorService
         _configuration = configuration;
         _xmlService = xmlService;
         _calculatorService = calculatorService;
+
+        Directory.CreateDirectory(_configuration["InputFolder"]!);
+        Directory.CreateDirectory(_configuration["OutputFolder"]!);
+        Directory.CreateDirectory(_configuration["Processed"]!);
     }
 
     public async Task StartAsync(CancellationToken cancellationToken)
     {
         var inputFolder = _configuration["InputFolder"]!;
-        Directory.CreateDirectory(inputFolder);
 
         _watcher = new FileSystemWatcher(inputFolder!, "*.xml");
         _watcher.Created += OnFileCreated;
@@ -54,7 +57,7 @@ public class FileProcessorService : IFileProcessorService
     {
         _logger.LogInformation($"Processing existing XML files in: {inputFolder}");
 
-        var tasks = Directory.GetFiles(inputFolder, "*.xml").Select(filePath => ProcessFileAsync(filePath));
+        var tasks = Directory.GetFiles(inputFolder, "*.xml").Select(ProcessFileAsync);
 
         await Task.WhenAll(tasks);
 
@@ -81,10 +84,15 @@ public class FileProcessorService : IFileProcessorService
             var generationOutput = _calculatorService.Calculate(generationReport, referenceData);
 
             // Serialize the GenerationOutput to XML
-            var outputFilePath = Path.Combine(_configuration["OutputFolder"]!, $"GenerationOutput_{DateTime.Now:yyyyMMddHHmmss}.xml");
+            var inputFilename = Path.GetFileNameWithoutExtension(filePath);
+            var outputFilePath = Path.Combine(_configuration["OutputFolder"]!, $"{inputFilename}_GenerationOutput_{DateTime.Now:yyyyMMddHHmmss}.xml");
             await _xmlService.SerializeGenerationOutputAsync(generationOutput, outputFilePath);
 
             _logger.LogInformation($"Processed and saved output to: {outputFilePath}");
+
+            File.Move(filePath, Path.Combine(_configuration["Processed"]!, inputFilename) );
+
+            _logger.LogInformation($"Processed file moved to Processed Folder : {inputFilename}");
         }
         catch (Exception ex)
         {

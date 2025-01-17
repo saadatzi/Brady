@@ -26,8 +26,10 @@ public class FileProcessorServiceTests : IDisposable
         Directory.CreateDirectory(_testDirectory);
         Directory.CreateDirectory(Path.Combine(_testDirectory, "Input"));
         Directory.CreateDirectory(Path.Combine(_testDirectory, "Output"));
+        Directory.CreateDirectory(Path.Combine(_testDirectory, "Processed"));
 
         _mockConfiguration.Setup(c => c["InputFolder"]).Returns(Path.Combine(_testDirectory, "Input"));
+        _mockConfiguration.Setup(c => c["Processed"]).Returns(Path.Combine(_testDirectory, "Processed"));
         _mockConfiguration.Setup(c => c["OutputFolder"]).Returns(Path.Combine(_testDirectory, "Output"));
         _mockConfiguration.Setup(c => c["ReferenceDataPath"]).Returns(Path.Combine(_testDirectory, "ReferenceData.xml"));
 
