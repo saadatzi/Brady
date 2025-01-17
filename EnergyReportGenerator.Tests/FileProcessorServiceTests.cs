@@ -1,9 +1,3 @@
-using EnergyReportGenerator.Models;
-using EnergyReportGenerator.Services;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
-using Moq;
-
 namespace EnergyReportGenerator.Tests;
 
 public class FileProcessorServiceTests : IDisposable
