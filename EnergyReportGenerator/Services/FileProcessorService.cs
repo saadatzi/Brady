@@ -1,12 +1,10 @@
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
-
 namespace EnergyReportGenerator.Services;
 
 public interface IFileProcessorService
 {
     Task StartAsync(CancellationToken cancellationToken);
     Task StopAsync(CancellationToken cancellationToken);
+    Task MultiprocessingStartAsync(CancellationToken cancellationToken);
 }
 public class FileProcessorService : IFileProcessorService
 {
@@ -44,12 +42,53 @@ public class FileProcessorService : IFileProcessorService
         _logger.LogInformation($"Watching for XML files in: {inputFolder}");
     }
 
-    public Task StopAsync(CancellationToken cancellationToken)
+    public async Task MultiprocessingStartAsync(CancellationToken cancellationToken)
     {
-        _watcher!.EnableRaisingEvents = false;
-        _watcher.Dispose();
-        _logger.LogInformation("Stopped watching for XML files.");
-        return Task.CompletedTask;
+        var inputFolder = _configuration["InputFolder"]!;
+
+        _watcher = new FileSystemWatcher(inputFolder, "*.xml");
+        _watcher.Created += OnFileCreated;
+        _watcher.EnableRaisingEvents = true;
+
+        await ProcessExistingFilesParallelAsync(inputFolder, cancellationToken);
+        _logger.LogInformation($"Watching for XML files in: {inputFolder} with multiprocessing");
+    }
+
+    private async Task ProcessExistingFilesParallelAsync(string inputFolder, CancellationToken cancellationToken)
+    {
+        _logger.LogInformation($"Processing existing XML files in: {inputFolder}");
+
+        var options = new ParallelOptions
+        {
+            MaxDegreeOfParallelism = Environment.ProcessorCount,
+            CancellationToken = cancellationToken
+        };
+
+        await Parallel.ForEachAsync(Directory.GetFiles(inputFolder, "*.xml"), options, async (filePath, ct) =>
+        {
+            try
+            {
+                await ProcessFileAsync(filePath);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Error processing existing file: {filePath}");
+            }
+        });
+
+        _logger.LogInformation($"Finished processing all existing files.");
+    }
+        
+    public async Task StopAsync(CancellationToken cancellationToken)
+    {
+        if(_watcher != null)
+        {
+            _watcher!.EnableRaisingEvents = false;
+            _watcher.Dispose();
+            _logger.LogInformation("Stopped watching for XML files.");
+        }
+
+        _logger.LogInformation("FileProcessorService stopped");
     }
 
 
@@ -90,7 +129,7 @@ public class FileProcessorService : IFileProcessorService
 
             _logger.LogInformation($"Processed and saved output to: {outputFilePath}");
 
-            File.Move(filePath, Path.Combine(_configuration["Processed"]!, inputFilename) );
+            File.Move(filePath, Path.Combine(_configuration["Processed"]!, inputFilename + ".xml") );
 
             _logger.LogInformation($"Processed file moved to Processed Folder : {inputFilename}");
         }
