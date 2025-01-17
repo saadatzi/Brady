@@ -1,23 +1,19 @@
-using EnergyReportGenerator.Models;
-using EnergyReportGenerator.Services;
-using FluentAssertions;
+namespace EnergyReportGenerator.Tests;
 
-namespace EnergyReportGenerator.Tests
+public class XmlServiceTests
 {
-    public class XmlServiceTests
+    private readonly XmlService _xmlService;
+
+    public XmlServiceTests()
     {
-        private readonly XmlService _xmlService;
+        _xmlService = new XmlService();
+    }
 
-        public XmlServiceTests()
-        {
-            _xmlService = new XmlService();
-        }
-
-        [Fact]
-        public async Task DeserializeGenerationReportAsync_ValidXml_ReturnsGenerationReport()
-        {
-            // Arrange
-            var xmlContent = @"<?xml version=""1.0"" encoding=""utf-8""?>
+    [Fact]
+    public async Task DeserializeGenerationReportAsync_ValidXml_ReturnsGenerationReport()
+    {
+        // Arrange
+        var xmlContent = @"<?xml version=""1.0"" encoding=""utf-8""?>
 <GenerationReport>
     <Wind>
         <WindGenerator>
@@ -61,26 +57,26 @@ namespace EnergyReportGenerator.Tests
         </CoalGenerator>
     </Coal>
 </GenerationReport>";
-            var filePath = CreateTestXmlFile(xmlContent, "GenerationReportTest.xml");
+        var filePath = CreateTestXmlFile(xmlContent, "GenerationReportTest.xml");
 
-            // Act
-            var result = await _xmlService.DeserializeGenerationReportAsync(filePath);
+        // Act
+        var result = await _xmlService.DeserializeGenerationReportAsync(filePath);
 
-            // Assert
-            result.Should().NotBeNull();
-            result.WindGenerators.Should().HaveCount(1);
-            result.GasGenerators.Should().HaveCount(1);
-            result.CoalGenerators.Should().HaveCount(1);
+        // Assert
+        result.Should().NotBeNull();
+        result.WindGenerators.Should().HaveCount(1);
+        result.GasGenerators.Should().HaveCount(1);
+        result.CoalGenerators.Should().HaveCount(1);
 
-            // Clean up
-            File.Delete(filePath);
-        }
+        // Clean up
+        File.Delete(filePath);
+    }
 
-        [Fact]
-        public async Task DeserializeReferenceDataAsync_ValidXml_ReturnsReferenceData()
-        {
-            // Arrange
-            var xmlContent = @"<?xml version=""1.0"" encoding=""utf-8""?>
+    [Fact]
+    public async Task DeserializeReferenceDataAsync_ValidXml_ReturnsReferenceData()
+    {
+        // Arrange
+        var xmlContent = @"<?xml version=""1.0"" encoding=""utf-8""?>
 <ReferenceData>
     <Factors>
         <ValueFactor>
@@ -95,57 +91,56 @@ namespace EnergyReportGenerator.Tests
         </EmissionsFactor>
     </Factors>
 </ReferenceData>";
-            var filePath = CreateTestXmlFile(xmlContent, "ReferenceDataTest.xml");
+        var filePath = CreateTestXmlFile(xmlContent, "ReferenceDataTest.xml");
 
-            // Act
-            var result = await _xmlService.DeserializeReferenceDataAsync(filePath);
+        // Act
+        var result = await _xmlService.DeserializeReferenceDataAsync(filePath);
 
-            // Assert
-            result.Should().NotBeNull();
-            result.Factors.Should().NotBeNull();
-            result.Factors.ValueFactor.High.Should().Be(0.9);
-            result.Factors.EmissionsFactor.Medium.Should().Be(0.6);
+        // Assert
+        result.Should().NotBeNull();
+        result.Factors.Should().NotBeNull();
+        result.Factors.ValueFactor.High.Should().Be(0.9);
+        result.Factors.EmissionsFactor.Medium.Should().Be(0.6);
 
-            // Clean up
-            File.Delete(filePath);
-        }
+        // Clean up
+        File.Delete(filePath);
+    }
 
-        [Fact]
-        public async Task SerializeGenerationOutputAsync_ValidData_CreatesXmlFile()
+    [Fact]
+    public async Task SerializeGenerationOutputAsync_ValidData_CreatesXmlFile()
+    {
+        // Arrange
+        var generationOutput = new GenerationOutput
         {
-            // Arrange
-            var generationOutput = new GenerationOutput
+            Totals = new List<GeneratorTotal>
             {
-                Totals = new List<GeneratorTotal>
-                {
-                    new GeneratorTotal { Name = "Wind[Offshore]", Total = 1000 }
-                },
-                MaxEmissionGenerators = new List<MaxEmissionDay>
-                {
-                    new MaxEmissionDay { Name = "Coal[1]", Date = DateTime.Now, Emission = 50 }
-                },
-                ActualHeatRates = new List<ActualHeatRate>
-                {
-                    new ActualHeatRate { Name = "Coal[1]", HeatRate = 1.2 }
-                }
-            };
-            var filePath = Path.Combine(Path.GetTempPath(), "GenerationOutputTest.xml");
+                new GeneratorTotal { Name = "Wind[Offshore]", Total = 1000 }
+            },
+            MaxEmissionGenerators = new List<MaxEmissionDay>
+            {
+                new MaxEmissionDay { Name = "Coal[1]", Date = DateTime.Now, Emission = 50 }
+            },
+            ActualHeatRates = new List<ActualHeatRate>
+            {
+                new ActualHeatRate { Name = "Coal[1]", HeatRate = 1.2 }
+            }
+        };
+        var filePath = Path.Combine(Path.GetTempPath(), "GenerationOutputTest.xml");
 
-            // Act
-            await _xmlService.SerializeGenerationOutputAsync(generationOutput, filePath);
+        // Act
+        await _xmlService.SerializeGenerationOutputAsync(generationOutput, filePath);
 
-            // Assert
-            File.Exists(filePath).Should().BeTrue();
+        // Assert
+        File.Exists(filePath).Should().BeTrue();
 
-            // Clean up
-            File.Delete(filePath);
-        }
+        // Clean up
+        File.Delete(filePath);
+    }
 
-        private string CreateTestXmlFile(string xmlContent, string fileName)
-        {
-            var filePath = Path.Combine(Path.GetTempPath(), fileName);
-            File.WriteAllText(filePath, xmlContent);
-            return filePath;
-        }
+    private string CreateTestXmlFile(string xmlContent, string fileName)
+    {
+        var filePath = Path.Combine(Path.GetTempPath(), fileName);
+        File.WriteAllText(filePath, xmlContent);
+        return filePath;
     }
 }
