@@ -7,6 +7,17 @@ namespace EnergyReportGenerator.UnoApp;
 
 public sealed partial class MainPage : Page
 {
+    private StorageFile? _generationReport;
+    private StorageFile? _referenceData;
+    private IGenerationCalculatorService _calculatorService;
+    private IXmlService _xmlService;
+
+    public MainPage()
+    {
+        this.InitializeComponent();
+        _calculatorService = App.Services.GetRequiredService<IGenerationCalculatorService>();
+        _xmlService = App.Services.GetRequiredService<IXmlService>();
+    }
     private async Task SelectGenerationReportButton_Click(object sender, RoutedEventArgs e)
     {
         _generationReport = await PickFileAsync();
@@ -36,4 +47,40 @@ public sealed partial class MainPage : Page
         return file;
     }
 
+    private async Task CalculateButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (_generationReport == null || _referenceData == null)
+        {
+            OutputTextBlock.Text = "Please select both Generation Report and Reference Data files.";
+            return;
+        }
+        
+        try
+        {
+            using (var generationReportStream = await _generationReport.OpenStreamForReadAsync())
+            using (var referenceDataStream = await _referenceData.OpenStreamForReadAsync())
+            {
+                var generationReport = await _xmlService.DeserializeGenerationReportStreamAsync(generationReportStream);
+                var referenceData = await _xmlService.DeserializeReferenceDataStreamAsync(referenceDataStream);
+
+                var generationOutput = _calculatorService.Calculate(generationReport, referenceData);
+
+                using (var outputStream = new MemoryStream())
+                {
+                    await _xmlService.SerializeGenerationOutputStreamAsync(generationOutput, outputStream);
+
+                    outputStream.Seek(0, SeekOrigin.Begin);
+                    using (var reader = new StreamReader(outputStream))
+                    {
+                        var outputXml = await reader.ReadToEndAsync();
+                        OutputTextBlock.Text = outputXml;
+                    }
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            OutputTextBlock.Text = $"Error during calculation: {ex.Message}";
+        }
+    }
 }

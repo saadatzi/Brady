@@ -1,3 +1,4 @@
+using EnergyReportGenerator.Services;
 using Uno.Resizetizer;
 
 namespace EnergyReportGenerator.UnoApp;
@@ -12,6 +13,7 @@ public partial class App : Application
     public App()
     {
         this.InitializeComponent();
+        InitializeServices();
     }
 
     protected Window? MainWindow { get; private set; }
@@ -50,6 +52,23 @@ public partial class App : Application
         // Ensure the current window is active
         MainWindow.Activate();
     }
+
+    private void InitializeServices()
+    {
+        var serviceCollection = new ServiceCollection();
+
+        serviceCollection.AddLogging(builder =>
+        {
+            builder.AddDebug();
+            builder.SetMinimumLevel(LogLevel.Debug);
+        });
+
+        serviceCollection.AddSingleton<IXmlService, XmlService>();
+        serviceCollection.AddSingleton<IGenerationCalculatorService, GenerationCalculatorService>();
+
+        Services = serviceCollection.BuildServiceProvider();
+    }
+
 
     /// <summary>
     /// Invoked when Navigation to a certain page fails
