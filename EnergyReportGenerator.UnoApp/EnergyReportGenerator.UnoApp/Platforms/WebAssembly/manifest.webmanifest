@@ -1,0 +1,10 @@
+{
+  "background_color": "#ffffff",
+  "description": "EnergyReportGenerator.UnoApp",
+  "display": "standalone",
+  "name": "EnergyReportGenerator.UnoApp",
+  "short_name": "EnergyReportGenerator.UnoApp",
+  "start_url": "/index.html",
+  "theme_color": "#ffffff",
+  "scope": "/"
+}

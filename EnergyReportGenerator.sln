@@ -5,30 +5,41 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EnergyReportGenerator", "EnergyReportGenerator\EnergyReportGenerator.csproj", "{EE6BC84A-2F73-4979-AF0A-EC0DF29072BC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EnergyReportGenerator.Tests", "EnergyReportGenerator.Tests\EnergyReportGenerator.Tests.csproj", "{CE5A5FD8-AFF9-4F06-96EF-5F273F086AFF}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "EnergyReportGenerator.UnoApp", "EnergyReportGenerator.UnoApp", "{C0743EE6-B947-4671-96A1-7CACF683075A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EnergyReportGenerator.Benchmark", "EnergyReportGenerator.Benchmark\EnergyReportGenerator.Benchmark.csproj", "{3D4EF161-C1EF-4527-9034-5CD4F55C05B9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EnergyReportGenerator.UnoApp", "EnergyReportGenerator.UnoApp\EnergyReportGenerator.UnoApp\EnergyReportGenerator.UnoApp.csproj", "{75A7511E-5FE4-446B-AF87-57917475EB1B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EnergyReportGenerator.Tests", "EnergyReportGenerator.Tests\EnergyReportGenerator.Tests.csproj", "{7A2544CF-1FD1-4D00-ACCE-5D186609877F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EnergyReportGenerator.Benchmark", "EnergyReportGenerator.Benchmark\EnergyReportGenerator.Benchmark.csproj", "{F8C2B59A-5AC2-4FB6-AA62-56C36ACCE600}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
-	GlobalSection(SolutionProperties) = preSolution
-		HideSolutionNode = FALSE
-	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{EE6BC84A-2F73-4979-AF0A-EC0DF29072BC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{EE6BC84A-2F73-4979-AF0A-EC0DF29072BC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EE6BC84A-2F73-4979-AF0A-EC0DF29072BC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EE6BC84A-2F73-4979-AF0A-EC0DF29072BC}.Release|Any CPU.Build.0 = Release|Any CPU
-		{CE5A5FD8-AFF9-4F06-96EF-5F273F086AFF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{CE5A5FD8-AFF9-4F06-96EF-5F273F086AFF}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{CE5A5FD8-AFF9-4F06-96EF-5F273F086AFF}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{CE5A5FD8-AFF9-4F06-96EF-5F273F086AFF}.Release|Any CPU.Build.0 = Release|Any CPU
-		{3D4EF161-C1EF-4527-9034-5CD4F55C05B9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{3D4EF161-C1EF-4527-9034-5CD4F55C05B9}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{3D4EF161-C1EF-4527-9034-5CD4F55C05B9}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{3D4EF161-C1EF-4527-9034-5CD4F55C05B9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{75A7511E-5FE4-446B-AF87-57917475EB1B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{75A7511E-5FE4-446B-AF87-57917475EB1B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{75A7511E-5FE4-446B-AF87-57917475EB1B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{75A7511E-5FE4-446B-AF87-57917475EB1B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7A2544CF-1FD1-4D00-ACCE-5D186609877F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7A2544CF-1FD1-4D00-ACCE-5D186609877F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7A2544CF-1FD1-4D00-ACCE-5D186609877F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7A2544CF-1FD1-4D00-ACCE-5D186609877F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F8C2B59A-5AC2-4FB6-AA62-56C36ACCE600}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F8C2B59A-5AC2-4FB6-AA62-56C36ACCE600}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F8C2B59A-5AC2-4FB6-AA62-56C36ACCE600}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F8C2B59A-5AC2-4FB6-AA62-56C36ACCE600}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{75A7511E-5FE4-446B-AF87-57917475EB1B} = {C0743EE6-B947-4671-96A1-7CACF683075A}
 	EndGlobalSection
 EndGlobal
