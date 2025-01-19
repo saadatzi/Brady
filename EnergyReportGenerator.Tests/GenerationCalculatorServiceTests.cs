@@ -69,9 +69,9 @@ public class GenerationCalculatorServiceTests
         // Assert
         result.Totals.Should().NotBeNull();
         result.Totals.Should().HaveCount(3);
-        result.Totals.Single(t => t.Name == "Wind[Offshore]").Total.Should().BeApproximately(100 * 20 * 0.3, 0.01); // Energy * Price * ValueFactor.Low
-        result.Totals.Single(t => t.Name == "Gas[1]").Total.Should().BeApproximately(200 * 15 * 0.7, 0.01); // Energy * Price * ValueFactor.Medium
-        result.Totals.Single(t => t.Name == "Coal[1]").Total.Should().BeApproximately(300 * 10 * 0.7, 0.01); // Energy * Price * ValueFactor.Medium
+        result.Totals?.Single(t => t.Name == "Wind[Offshore]").Total.Should().BeApproximately(100 * 20 * 0.3, 0.01); // Energy * Price * ValueFactor.Low
+        result.Totals?.Single(t => t.Name == "Gas[1]").Total.Should().BeApproximately(200 * 15 * 0.7, 0.01); // Energy * Price * ValueFactor.Medium
+        result.Totals?.Single(t => t.Name == "Coal[1]").Total.Should().BeApproximately(300 * 10 * 0.7, 0.01); // Energy * Price * ValueFactor.Medium
     }
 
     [Fact]
@@ -125,10 +125,10 @@ public class GenerationCalculatorServiceTests
         // Assert
         result.MaxEmissionGenerators.Should().NotBeNull();
         result.MaxEmissionGenerators.Should().HaveCount(2); // Two days with emissions
-        result.MaxEmissionGenerators.Single(m => m.Date == DateTime.Today).Name.Should().Be("Coal[1]");
-        result.MaxEmissionGenerators.Single(m => m.Date == DateTime.Today).Emission.Should().BeApproximately(50 * 0.5 * 0.8, 0.01); // Energy * EmissionRating * EmissionFactor.High
-        result.MaxEmissionGenerators.Single(m => m.Date == DateTime.Today.AddDays(1)).Name.Should().Be("Coal[1]");
-        result.MaxEmissionGenerators.Single(m => m.Date == DateTime.Today.AddDays(1)).Emission.Should().BeApproximately(40 * 0.5 * 0.8, 0.01); // Energy * EmissionRating * EmissionFactor.Medium
+        result.MaxEmissionGenerators?.Single(m => m.Date == DateTime.Today).Name.Should().Be("Coal[1]");
+        result.MaxEmissionGenerators?.Single(m => m.Date == DateTime.Today).Emission.Should().BeApproximately(50 * 0.5 * 0.8, 0.01); // Energy * EmissionRating * EmissionFactor.High
+        result.MaxEmissionGenerators?.Single(m => m.Date == DateTime.Today.AddDays(1)).Name.Should().Be("Coal[1]");
+        result.MaxEmissionGenerators?.Single(m => m.Date == DateTime.Today.AddDays(1)).Emission.Should().BeApproximately(40 * 0.5 * 0.8, 0.01); // Energy * EmissionRating * EmissionFactor.Medium
     }
 
     [Fact]
@@ -180,7 +180,7 @@ public class GenerationCalculatorServiceTests
         // Assert
         result.ActualHeatRates.Should().NotBeNull();
         result.ActualHeatRates.Should().HaveCount(2);
-        result.ActualHeatRates.Single(h => h.Name == "Coal[1]").HeatRate.Should().BeApproximately(1.2, 0.01); // TotalHeatInput / ActualNetGeneration
-        result.ActualHeatRates.Single(h => h.Name == "Coal[2]").HeatRate.Should().Be(double.NaN); // Handle division by zero
+        result.ActualHeatRates?.Single(h => h.Name == "Coal[1]").HeatRate.Should().BeApproximately(1.2, 0.01); // TotalHeatInput / ActualNetGeneration
+        result.ActualHeatRates?.Single(h => h.Name == "Coal[2]").HeatRate.Should().Be(double.NaN); // Handle division by zero
     }
 }

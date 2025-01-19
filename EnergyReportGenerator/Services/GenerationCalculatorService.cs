@@ -22,7 +22,7 @@ public class GenerationCalculatorService : IGenerationCalculatorService
     {
         var totals = new List<GeneratorTotal>();
 
-        var allGenerators = report.WindGenerators.Cast<Generator>()
+        var allGenerators = report.WindGenerators?.Cast<Generator>()
             .Concat(report.GasGenerators)
             .Concat(report.CoalGenerators)
             .ToList();

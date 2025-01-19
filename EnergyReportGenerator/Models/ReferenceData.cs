@@ -4,16 +4,16 @@ namespace EnergyReportGenerator.Models;
 public class ReferenceData
 {
     [XmlElement("Factors")]
-    public Factors Factors { get; set; }
+    public Factors? Factors { get; set; }
 }
 
 public class Factors
 {
     [XmlElement("ValueFactor")]
-    public ValueFactor ValueFactor { get; set; }
+    public ValueFactor? ValueFactor { get; set; }
 
     [XmlElement("EmissionsFactor")]
-    public EmissionsFactor EmissionsFactor { get; set; }
+    public EmissionsFactor? EmissionsFactor { get; set; }
 }
 
 public class ValueFactor

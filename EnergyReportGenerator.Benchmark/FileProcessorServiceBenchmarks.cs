@@ -62,7 +62,7 @@ public class FileProcessorServiceBenchmarks
 
         await fileProcessorService.StartAsync(cancellationTokenSource.Token);
         // await Task.Delay(5000);
-        await fileProcessorService.StopAsync(cancellationTokenSource.Token);
+        fileProcessorService.Stop(cancellationTokenSource.Token);
     }
 
     [Benchmark]
@@ -73,7 +73,7 @@ public class FileProcessorServiceBenchmarks
 
         await fileProcessorService.MultiprocessingStartAsync(cancellationTokenSource.Token);
         // await Task.Delay(5000);
-        await fileProcessorService.StopAsync(cancellationTokenSource.Token);
+        fileProcessorService.Stop(cancellationTokenSource.Token);
     }
 
     private void CopySampleFiles(int count)
@@ -81,24 +81,24 @@ public class FileProcessorServiceBenchmarks
         for (int i = 0; i < count; i++)
         {
             string newFileName = $"GenerationReport_{i}.xml";
-            string destPath = Path.Combine(InputFolder, newFileName);
-            File.Copy(_sampleFilePath, destPath, true);
+            string destPath = Path.Combine(InputFolder!, newFileName);
+            File.Copy(_sampleFilePath!, destPath, true);
         }
     }
 
     private void CleanUpBenchmarkFolders()
     {
-        foreach (var file in Directory.GetFiles(InputFolder))
+        foreach (var file in Directory.GetFiles(InputFolder!))
         {
             File.Delete(file);
         }
 
-        foreach (var file in Directory.GetFiles(OutputFolder))
+        foreach (var file in Directory.GetFiles(OutputFolder!))
         {
             File.Delete(file);
         }
 
-        foreach (var file in Directory.GetFiles(ProcessedFolder))
+        foreach (var file in Directory.GetFiles(ProcessedFolder!))
         {
             File.Delete(file);
         }

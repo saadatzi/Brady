@@ -109,7 +109,7 @@ public class FileProcessorServiceTests : IDisposable
 
     public void Dispose()
     {
-        _fileProcessorService.StopAsync(CancellationToken.None).Wait();
+        _fileProcessorService.Stop(CancellationToken.None);
         Directory.Delete(_testDirectory, true);
     }
 }

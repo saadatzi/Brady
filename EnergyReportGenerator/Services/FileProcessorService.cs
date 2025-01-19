@@ -3,7 +3,7 @@ namespace EnergyReportGenerator.Services;
 public interface IFileProcessorService
 {
     Task StartAsync(CancellationToken cancellationToken);
-    Task StopAsync(CancellationToken cancellationToken);
+    void Stop(CancellationToken cancellationToken);
     Task MultiprocessingStartAsync(CancellationToken cancellationToken);
 }
 public class FileProcessorService : IFileProcessorService
@@ -79,7 +79,7 @@ public class FileProcessorService : IFileProcessorService
         _logger.LogInformation($"Finished processing all existing files.");
     }
         
-    public async Task StopAsync(CancellationToken cancellationToken)
+    public void Stop(CancellationToken cancellationToken)
     {
         if(_watcher != null)
         {

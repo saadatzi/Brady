@@ -3,10 +3,12 @@ namespace EnergyReportGenerator.Tests;
 public class XmlServiceTests
 {
     private readonly XmlService _xmlService;
+    private readonly Mock<ILogger<XmlService>> _mockLogger;
 
     public XmlServiceTests()
     {
-        _xmlService = new XmlService();
+        _mockLogger = new Mock<ILogger<XmlService>>();
+        _xmlService = new XmlService(_mockLogger.Object);
     }
 
     [Fact]

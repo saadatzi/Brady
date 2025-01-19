@@ -5,21 +5,21 @@ public class GenerationReport
 {
     [XmlArray("Wind")]
     [XmlArrayItem("WindGenerator", typeof(WindGenerator))]
-    public List<WindGenerator> WindGenerators { get; set; }
+    public List<WindGenerator>? WindGenerators { get; set; }
 
     [XmlArray("Gas")]
     [XmlArrayItem("GasGenerator", typeof(GasGenerator))]
-    public List<GasGenerator> GasGenerators { get; set; }
+    public List<GasGenerator>? GasGenerators { get; set; }
 
     [XmlArray("Coal")]
     [XmlArrayItem("CoalGenerator", typeof(CoalGenerator))]
-    public List<CoalGenerator> CoalGenerators { get; set; }
+    public List<CoalGenerator>? CoalGenerators { get; set; }
 }
 
 public class WindGenerator : Generator
 {
     [XmlElement("Location")]
-    public string Location { get; set; }
+    public string? Location { get; set; }
 }
 
 public class GasGenerator : Generator
@@ -43,11 +43,11 @@ public class CoalGenerator : Generator
 public class Generator
 {
     [XmlElement("Name")]
-    public string Name { get; set; }
+    public string? Name { get; set; }
 
     [XmlArray("Generation")]
     [XmlArrayItem("Day", typeof(DayGeneration))]
-    public List<DayGeneration> Generation { get; set; }
+    public List<DayGeneration>? Generation { get; set; }
 }
 
 public class DayGeneration
