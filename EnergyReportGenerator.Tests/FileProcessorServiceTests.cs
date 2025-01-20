@@ -6,6 +6,7 @@ public class FileProcessorServiceTests : IDisposable
     private readonly Mock<IConfiguration> _mockConfiguration;
     private readonly Mock<IXmlService> _mockXmlService;
     private readonly Mock<IGenerationCalculatorService> _mockCalculatorService;
+    private readonly Mock<IActivitySource> _mockActivitySource;
     private readonly FileProcessorService _fileProcessorService;
     private readonly string _testDirectory;
 
@@ -15,6 +16,7 @@ public class FileProcessorServiceTests : IDisposable
         _mockConfiguration = new Mock<IConfiguration>();
         _mockXmlService = new Mock<IXmlService>();
         _mockCalculatorService = new Mock<IGenerationCalculatorService>();
+        _mockActivitySource = new Mock<IActivitySource>();
 
         _testDirectory = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
         Directory.CreateDirectory(_testDirectory);
@@ -31,7 +33,8 @@ public class FileProcessorServiceTests : IDisposable
             _mockLogger.Object,
             _mockConfiguration.Object,
             _mockXmlService.Object,
-            _mockCalculatorService.Object);
+            _mockCalculatorService.Object,
+            _mockActivitySource.Object);
     }
 
     [Fact]
@@ -51,6 +54,7 @@ public class FileProcessorServiceTests : IDisposable
             ),
             Times.Once
         );
+        _mockActivitySource.Verify(x => x.StartActivity(It.IsAny<string>()), Times.Exactly(2));
     }
 
     [Fact]
@@ -67,6 +71,7 @@ public class FileProcessorServiceTests : IDisposable
         _mockXmlService.Setup(x => x.DeserializeGenerationReportAsync(filePath)).ReturnsAsync(generationReport);
         _mockXmlService.Setup(x => x.DeserializeReferenceDataAsync(It.IsAny<string>())).ReturnsAsync(referenceData);
         _mockCalculatorService.Setup(x => x.Calculate(generationReport, referenceData)).Returns(generationOutput);
+        _mockActivitySource.Setup(x => x.StartActivity(It.IsAny<string>())).Returns(new Activity("TestActivity"));
 
         await _fileProcessorService.StartAsync(CancellationToken.None);
 
@@ -78,6 +83,7 @@ public class FileProcessorServiceTests : IDisposable
         _mockXmlService.Verify(x => x.DeserializeReferenceDataAsync(It.IsAny<string>()), Times.Once);
         _mockCalculatorService.Verify(x => x.Calculate(generationReport, referenceData), Times.Once);
         _mockXmlService.Verify(x => x.SerializeGenerationOutputAsync(generationOutput, It.IsAny<string>()), Times.Once);
+        _mockActivitySource.Verify(x => x.StartActivity(It.IsAny<string>()), Times.AtLeastOnce);
     }
 
     [Fact]
@@ -88,7 +94,7 @@ public class FileProcessorServiceTests : IDisposable
         File.WriteAllText(filePath, "<InvalidXml>");
 
         _mockXmlService.Setup(x => x.DeserializeGenerationReportAsync(filePath)).ThrowsAsync(new Exception("Deserialization error"));
-
+        _mockActivitySource.Setup(x => x.StartActivity(It.IsAny<string>())).Returns(new Activity("TestActivity"));
         await _fileProcessorService.StartAsync(CancellationToken.None);
 
         // Act
@@ -105,6 +111,7 @@ public class FileProcessorServiceTests : IDisposable
             ),
             Times.Once
         );
+        _mockActivitySource.Verify(x => x.StartActivity(It.IsAny<string>()), Times.AtLeast(1));
     }
 
     public void Dispose()

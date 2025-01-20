@@ -4,3 +4,4 @@ global using EnergyReportGenerator.Services;
 global using EnergyReportGenerator.Models;
 global using Moq;
 global using FluentAssertions;
+global using System.Diagnostics;

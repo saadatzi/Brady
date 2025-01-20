@@ -4,11 +4,13 @@ public class XmlServiceTests
 {
     private readonly XmlService _xmlService;
     private readonly Mock<ILogger<XmlService>> _mockLogger;
+    private readonly Mock<IActivitySource> _mockActivitySource;
 
     public XmlServiceTests()
     {
         _mockLogger = new Mock<ILogger<XmlService>>();
-        _xmlService = new XmlService(_mockLogger.Object);
+        _mockActivitySource = new Mock<IActivitySource>();
+        _xmlService = new XmlService(_mockLogger.Object,_mockActivitySource.Object);
     }
 
     [Fact]
@@ -60,6 +62,7 @@ public class XmlServiceTests
     </Coal>
 </GenerationReport>";
         var filePath = CreateTestXmlFile(xmlContent, "GenerationReportTest.xml");
+         _mockActivitySource.Setup(x => x.StartActivity(It.IsAny<string>())).Returns(new Activity("TestActivity"));
 
         // Act
         var result = await _xmlService.DeserializeGenerationReportAsync(filePath);
@@ -69,6 +72,7 @@ public class XmlServiceTests
         result.WindGenerators.Should().HaveCount(1);
         result.GasGenerators.Should().HaveCount(1);
         result.CoalGenerators.Should().HaveCount(1);
+        _mockActivitySource.Verify(x => x.StartActivity(It.IsAny<string>()), Times.AtLeastOnce);
 
         // Clean up
         File.Delete(filePath);
@@ -94,6 +98,7 @@ public class XmlServiceTests
     </Factors>
 </ReferenceData>";
         var filePath = CreateTestXmlFile(xmlContent, "ReferenceDataTest.xml");
+        _mockActivitySource.Setup(x => x.StartActivity(It.IsAny<string>())).Returns(new Activity("TestActivity"));
 
         // Act
         var result = await _xmlService.DeserializeReferenceDataAsync(filePath);
@@ -103,6 +108,7 @@ public class XmlServiceTests
         result.Factors.Should().NotBeNull();
         result.Factors.ValueFactor.High.Should().Be(0.9);
         result.Factors.EmissionsFactor.Medium.Should().Be(0.6);
+         _mockActivitySource.Verify(x => x.StartActivity(It.IsAny<string>()), Times.AtLeastOnce);
 
         // Clean up
         File.Delete(filePath);
@@ -127,6 +133,7 @@ public class XmlServiceTests
                 new ActualHeatRate { Name = "Coal[1]", HeatRate = 1.2 }
             }
         };
+         _mockActivitySource.Setup(x => x.StartActivity(It.IsAny<string>())).Returns(new Activity("TestActivity"));
         var filePath = Path.Combine(Path.GetTempPath(), "GenerationOutputTest.xml");
 
         // Act
@@ -134,6 +141,7 @@ public class XmlServiceTests
 
         // Assert
         File.Exists(filePath).Should().BeTrue();
+         _mockActivitySource.Verify(x => x.StartActivity(It.IsAny<string>()), Times.AtLeastOnce);
 
         // Clean up
         File.Delete(filePath);
