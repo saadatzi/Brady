@@ -10,7 +10,6 @@ public class FileProcessorServiceBenchmarks
     private string? ReferenceDataPath;
     private const string SampleFileSetting = "SampleGenerationReportFile";
     private const int FileCount = 1000;
-
     private string? _sampleFilePath;
     private ServiceProvider? _serviceProvider;
 
@@ -18,7 +17,6 @@ public class FileProcessorServiceBenchmarks
     public void GlobalSetup()
     {
         var configuration = new ConfigurationBuilder()
-            // .SetBasePath(Directory.GetCurrentDirectory())
             .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
             .Build();
 
@@ -30,6 +28,10 @@ public class FileProcessorServiceBenchmarks
 
         var services = new ServiceCollection();
         services.AddLogging(configure => configure.AddConsole());
+        services.AddSingleton<IActivitySource, ActivitySourceWrapper>(sp => new ActivitySourceWrapper("EnergyReportGenerator"));
+        services.AddSingleton<ILogger<FileProcessorService>>(sp => sp.GetRequiredService<ILoggerFactory>().CreateLogger<FileProcessorService>());
+        services.AddSingleton<ILogger<XmlService>>(sp => sp.GetRequiredService<ILoggerFactory>().CreateLogger<XmlService>());
+        services.AddSingleton<ILogger<GenerationCalculatorService>>(sp => sp.GetRequiredService<ILoggerFactory>().CreateLogger<GenerationCalculatorService>());
         services.AddSingleton<IConfiguration>(configuration);
         services.AddSingleton<IXmlService, XmlService>();
         services.AddSingleton<IGenerationCalculatorService, GenerationCalculatorService>();
@@ -61,7 +63,6 @@ public class FileProcessorServiceBenchmarks
         var cancellationTokenSource = new CancellationTokenSource();
 
         await fileProcessorService.StartAsync(cancellationTokenSource.Token);
-        // await Task.Delay(5000);
         fileProcessorService.Stop(cancellationTokenSource.Token);
     }
 
@@ -72,7 +73,6 @@ public class FileProcessorServiceBenchmarks
         var cancellationTokenSource = new CancellationTokenSource();
 
         await fileProcessorService.MultiprocessingStartAsync(cancellationTokenSource.Token);
-        // await Task.Delay(5000);
         fileProcessorService.Stop(cancellationTokenSource.Token);
     }
 
