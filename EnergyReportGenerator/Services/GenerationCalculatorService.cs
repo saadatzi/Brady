@@ -7,8 +7,8 @@ public interface IGenerationCalculatorService
 public class GenerationCalculatorService : IGenerationCalculatorService
 {
     private readonly ILogger<GenerationCalculatorService> _logger;
-    private readonly ActivitySource _activitySource;
-    public GenerationCalculatorService(ILogger<GenerationCalculatorService> logger, ActivitySource activitySource)
+    private readonly IActivitySource _activitySource;
+    public GenerationCalculatorService(ILogger<GenerationCalculatorService> logger, IActivitySource activitySource)
     {
         _logger = logger;
         _activitySource = activitySource;

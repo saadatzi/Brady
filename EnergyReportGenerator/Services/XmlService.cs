@@ -12,9 +12,9 @@ public interface IXmlService
 public class XmlService : IXmlService
 {
     private readonly ILogger<XmlService> _logger;
-    private readonly ActivitySource _activitySource;
+    private readonly IActivitySource _activitySource;
 
-    public XmlService(ILogger<XmlService> logger, ActivitySource activitySource)
+    public XmlService(ILogger<XmlService> logger, IActivitySource activitySource)
     {
         _logger = logger;
         _activitySource = activitySource;

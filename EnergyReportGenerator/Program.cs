@@ -56,6 +56,7 @@ public class Program
                 services.AddSingleton<IXmlService, XmlService>();
                 services.AddSingleton<IGenerationCalculatorService, GenerationCalculatorService>();
                 services.AddSingleton<IFileProcessorService, FileProcessorService>();
+                services.AddSingleton<IActivitySource>(new ActivitySourceWrapper("EnergyReportGenerator"));
 
                 services.AddOpenTelemetry()
                         .WithTracing(tracerProviderBuilder =>

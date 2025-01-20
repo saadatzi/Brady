@@ -12,7 +12,7 @@ public class FileProcessorService : IFileProcessorService
     private readonly IConfiguration _configuration;
     private readonly IXmlService _xmlService;
     private readonly IGenerationCalculatorService _calculatorService;
-    private readonly ActivitySource _activitySource;
+    private readonly IActivitySource _activitySource;
     private FileSystemWatcher? _watcher;
 
     public FileProcessorService(
@@ -20,7 +20,7 @@ public class FileProcessorService : IFileProcessorService
         IConfiguration configuration,
         IXmlService xmlService,
         IGenerationCalculatorService calculatorService,
-        ActivitySource activitySource)
+        IActivitySource activitySource)
     {
         _logger = logger;
         _configuration = configuration;
