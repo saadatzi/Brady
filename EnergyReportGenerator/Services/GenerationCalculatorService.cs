@@ -6,8 +6,25 @@ public interface IGenerationCalculatorService
 }
 public class GenerationCalculatorService : IGenerationCalculatorService
 {
+    private readonly ILogger<GenerationCalculatorService> _logger;
+    private readonly ActivitySource _activitySource;
+    public GenerationCalculatorService(ILogger<GenerationCalculatorService> logger, ActivitySource activitySource)
+    {
+        _logger = logger;
+        _activitySource = activitySource;
+    }
+
     public GenerationOutput Calculate(GenerationReport report, ReferenceData referenceData)
     {
+        using var activity = _activitySource.StartActivity($"{nameof(GenerationCalculatorService)}.{nameof(Calculate)}");
+
+        if (report == null || referenceData == null)
+        {
+            _logger.LogError("GenerationReport or ReferenceData is null.");
+            activity?.SetStatus(ActivityStatusCode.Error, "Input data is null.");
+            return new GenerationOutput();
+        }
+
         var output = new GenerationOutput
         {
             Totals = CalculateGeneratorTotals(report, referenceData),
@@ -15,11 +32,14 @@ public class GenerationCalculatorService : IGenerationCalculatorService
             ActualHeatRates = CalculateActualHeatRates(report)
         };
 
+        _logger.LogInformation("Generation output calculation completed.");
+        activity?.AddEvent(new ActivityEvent("Finished generation calculation."));
         return output;
     }
 
     private List<GeneratorTotal> CalculateGeneratorTotals(GenerationReport report, ReferenceData referenceData)
     {
+        using var activity = _activitySource.StartActivity($"{nameof(CalculateGeneratorTotals)}");
         var totals = new List<GeneratorTotal>();
 
         var allGenerators = report.WindGenerators?.Cast<Generator>()
@@ -45,6 +65,7 @@ public class GenerationCalculatorService : IGenerationCalculatorService
 
     private List<MaxEmissionDay> CalculateMaxEmissionGenerators(GenerationReport report, ReferenceData referenceData)
     {
+        using var activity = _activitySource.StartActivity($"{nameof(CalculateMaxEmissionGenerators)}");
         var maxEmissionDays = new Dictionary<DateTime, MaxEmissionDay>();
 
         var emissionGenerators = report.GasGenerators.Cast<Generator>()
@@ -80,6 +101,7 @@ public class GenerationCalculatorService : IGenerationCalculatorService
 
     private List<ActualHeatRate> CalculateActualHeatRates(GenerationReport report)
     {
+        using var activity = _activitySource.StartActivity($"{nameof(CalculateActualHeatRates)}");
         return report.CoalGenerators.Select(g => new ActualHeatRate
         {
             Name = g.Name,
